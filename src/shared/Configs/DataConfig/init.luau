@@ -4,7 +4,7 @@ local DataConfig = {}
 
 DataConfig.Template = {
 	Currencies = {
-		Stars = {
+		StarDust = {
 			Amount = 0,
 			Multiplier = 1,
 		},
