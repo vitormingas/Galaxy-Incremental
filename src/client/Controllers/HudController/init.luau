@@ -24,7 +24,8 @@ function HudController:SetupCurrencies()
 		local currency = currencyFolder.Name
 		if not dataTemplate.Currencies[currency] then continue end
 
-		local currencyFrame = playerGui.Main.Currencies:WaitForChild(currency)
+		local currenciesFrame = playerGui:WaitForChild("Main"):WaitForChild("Currencies")
+		local currencyFrame = currenciesFrame:WaitForChild(currency)
 		if not currencyFrame then continue end
 
 		local textLabel: TextLabel = currencyFrame:WaitForChild("TextLabel")

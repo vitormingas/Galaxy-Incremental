@@ -15,7 +15,7 @@ part.Touched:Connect(function(player: Player)
 	local data = ProfileStore:GetData(p)
 	data.Currencies.Stars.Amount += 1
 	local value = p:WaitForChild("Currencies"):WaitForChild("StarDust"):WaitForChild("Amount")
-	value.Value = data.Currencies.Stars.Amount
+	value.Value = data.Currencies.StarDust.Amount
 end)
 
 return TestService
