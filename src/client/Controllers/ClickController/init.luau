@@ -1,2 +1,3 @@
--- filler
--- god viado
+local ClickController = {}
+
+return ClickController
