@@ -2,12 +2,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- oi
-
 -- references
 local Configs = ReplicatedStorage.Shared.Configs
-
--- tchau
 
 -- modules
 local DataConfig = require(Configs.DataConfig)
