@@ -14,7 +14,7 @@ part.Touched:Connect(function(player: Player)
 	local p = Players:GetPlayerFromCharacter(player.Parent)
 	local data = ProfileStore:GetData(p)
 	data.Currencies.Stars.Amount += 1
-	local value = p:WaitForChild("Currencies"):WaitForChild("Stars"):WaitForChild("Amount")
+	local value = p:WaitForChild("Currencies"):WaitForChild("StarDust"):WaitForChild("Amount")
 	value.Value = data.Currencies.Stars.Amount
 end)
 
