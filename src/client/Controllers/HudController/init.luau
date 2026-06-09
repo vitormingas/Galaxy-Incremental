@@ -2,6 +2,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+-- oi
+
 -- references
 local Configs = ReplicatedStorage.Shared.Configs
 
