@@ -5,6 +5,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- references
 local Configs = ReplicatedStorage.Shared.Configs
 
+-- tchau
+
 -- modules
 local DataConfig = require(Configs.DataConfig)
 local FormatService = require(ReplicatedStorage.Shared.Modules.FormatService)
