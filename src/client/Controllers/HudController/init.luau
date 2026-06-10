@@ -10,7 +10,10 @@ local DataConfig = require(Configs.DataConfig)
 local FormatService = require(ReplicatedStorage.Shared.Modules.FormatService)
 
 local player = Players.LocalPlayer
-local playerGui = player:FindFirstChild("PlayerGui")
+local playerGui = player:WaitForChild("PlayerGui")
+local mainScreenGui = playerGui:WaitForChild("Main")
+local currenciesFrame = mainScreenGui:WaitForChild("Currencies")
+
 local dataTemplate = DataConfig.Template
 local playerCurrencies = player:WaitForChild("Currencies")
 
@@ -35,7 +38,6 @@ function HudController:SetupCurrencies()
 		local currency = currencyFolder.Name
 		if not dataTemplate.Currencies[currency] then continue end
 
-		local currenciesFrame = playerGui:WaitForChild("Main"):WaitForChild("Currencies")
 		local currencyFrame = currenciesFrame:WaitForChild(currency)
 		if not currencyFrame then continue end
 
@@ -48,7 +50,6 @@ function HudController:SetupCurrencies()
 end
 
 function HudController:UpdateCurrency(currency: string, amount: number)
-	local currenciesFrame = playerGui:WaitForChild("Main"):WaitForChild("Currencies")
 	local currencyFrame = currenciesFrame:WaitForChild(currency)
 	if not currencyFrame then return end
 
