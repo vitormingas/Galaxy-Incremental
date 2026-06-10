@@ -12,14 +12,25 @@ local FormatService = require(ReplicatedStorage.Shared.Modules.FormatService)
 local player = Players.LocalPlayer
 local playerGui = player:FindFirstChild("PlayerGui")
 local dataTemplate = DataConfig.Template
+local playerCurrencies = player:WaitForChild("Currencies")
 
 local HudController = {}
 
-function HudController:init() self:SetupCurrencies() end
+function HudController:init()
+	self:SetupCurrencies()
+
+	for _, currencyFolder in playerCurrencies:GetChildren() do
+		local currency = currencyFolder.Name
+		if not dataTemplate.Currencies[currency] then continue end
+
+		local playerWallet = playerCurrencies:WaitForChild(currency):WaitForChild("Amount")
+		if not playerWallet then continue end
+
+		playerWallet.Changed:Connect(function(newValue) self:UpdateCurrency(currency, newValue) end)
+	end
+end
 
 function HudController:SetupCurrencies()
-	local playerCurrencies = player:WaitForChild("Currencies")
-
 	for _, currencyFolder in playerCurrencies:GetChildren() do
 		local currency = currencyFolder.Name
 		if not dataTemplate.Currencies[currency] then continue end
@@ -34,6 +45,15 @@ function HudController:SetupCurrencies()
 
 		textLabel.Text = FormatService:Format(playerWallet.Value)
 	end
+end
+
+function HudController:UpdateCurrency(currency: string, amount: number)
+	local currenciesFrame = playerGui:WaitForChild("Main"):WaitForChild("Currencies")
+	local currencyFrame = currenciesFrame:WaitForChild(currency)
+	if not currencyFrame then return end
+
+	local textLabel: TextLabel = currencyFrame:WaitForChild("TextLabel")
+	textLabel.Text = FormatService:Format(amount)
 end
 
 return HudController

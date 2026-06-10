@@ -80,7 +80,14 @@ function ProfileService:CreateFolders(parent, data)
 			self:CreateFolders(folder, v)
 		end
 
-		if vType == "number" or vType == "string" then
+		if vType == "number" then
+			local valueInstance = Instance.new("NumberValue")
+			valueInstance.Name = k
+			valueInstance.Value = v
+			valueInstance.Parent = parent
+		end
+
+		if vType == "string" then
 			local valueInstance = Instance.new("StringValue")
 			valueInstance.Name = k
 			valueInstance.Value = v
