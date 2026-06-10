@@ -1,3 +1,0 @@
-local ClickController = {}
-
-return ClickController
