@@ -28,6 +28,9 @@ local randomGenerator = Random.new()
 local frameSizes = {}
 local animatingFrames = {}
 
+local lastBalances = {}
+local gainsPerSecond = {}
+
 local HudController = {}
 
 --stylua: ignore
@@ -42,8 +45,10 @@ function HudController:init()
 		if not playerWallet then continue end
 		
 		playerWallet.Changed:Connect(function(newValue)
-			 self:UpdateCurrency(currency, newValue) 
+			self:UpdateCurrency(currency, newValue)
+			self:CalculateGain(currency, newValue)
 		end)
+		self:GainLoop(currency)
 	end
 end
 
@@ -64,6 +69,8 @@ function HudController:SetupCurrencies()
 		local playerWallet = playerCurrencies:WaitForChild(currency):WaitForChild("Amount")
 		if not playerWallet then continue end
 
+		lastBalances[currency] = playerWallet.Value
+		gainsPerSecond[currency] = 0
 		textLabel.Text = FormatService:Format(playerWallet.Value)
 	end
 end
@@ -78,6 +85,38 @@ function HudController:UpdateCurrency(currency: string, amount: number)
 	self:GainAnimation(currency, currencyFrame, textLabel, textFlash)
 	textLabel.Text = FormatService:Format(amount)
 	textFlash.Text = FormatService:Format(amount)
+end
+
+--stylua: ignore
+function HudController:CalculateGain(currency: string, newValue: number)
+
+	if not lastBalances[currency] then return end
+	if not gainsPerSecond[currency] then return end 
+
+	local gain = newValue - lastBalances[currency]
+	lastBalances[currency] = newValue
+
+	if gain > 0 then
+		gainsPerSecond[currency] += gain
+	end
+end
+
+--stylua: ignore
+function HudController:GainLoop(currency)
+	task.spawn(function()
+		while true do 
+			local currencyFrame = currenciesFrame:FindFirstChild(currency)
+			local textGain: TextLabel = currencyFrame:FindFirstChild("Gains")
+			if not currencyFrame or not textGain then return end
+
+			local gain = gainsPerSecond[currency]
+			gainsPerSecond[currency] = 0
+
+	        textGain.Text = `{FormatService:Format(gain)}/s`
+
+			task.wait(1)
+		end
+	end)
 end
 
 --stylua: ignore
