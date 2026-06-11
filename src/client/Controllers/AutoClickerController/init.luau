@@ -8,7 +8,7 @@ local Configs = ReplicatedStorage.Shared.Configs
 
 -- modules
 local BridgeNet2 = require(Packages.Bridgenet2)
-local ClickerConfig = require(Configs.ClickersConfig)
+local ClicksConfig = require(Configs.ClicksConfig)
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -18,9 +18,12 @@ local autoClickerFrame = bottomHud:WaitForChild("AutoClicker")
 
 local playerSettings = player:WaitForChild("Settings")
 local activeCurrencyData: StringValue = playerSettings:WaitForChild("ActiveMainCurrency")
-local activeAcButton: ImageButton = autoClickerFrame:WaitForChild("Active")
+local toggleData: BoolValue = playerSettings:WaitForChild("AutoClicker")
 
-local clickEvent = BridgeNet2.ReferenceBridge("clickEvent")
+local activeAcButton: ImageButton = autoClickerFrame:WaitForChild("Active")
+local toggleImage = activeAcButton:WaitForChild("Toggle") :: ImageLabel
+
+local toggleAutoClickerEvent = BridgeNet2.ReferenceBridge("toggleAutoClickerEvent")
 
 local AutoClickerController = {}
 
@@ -28,33 +31,54 @@ local AutoClickerController = {}
 function AutoClickerController:init()
 	self:SetupAutoClicker()
 
+	activeAcButton.MouseButton1Click:Connect(function()
+		toggleAutoClickerEvent:Fire()
+	end)
+
 	activeCurrencyData.Changed:Connect(function(newCurrency)
 		 self:UpdateAutoClicker(newCurrency) 
 	end)
 
-	activeAcButton.MouseButton1Click:Connect(function()
-	 	clickEvent:Fire({activeCurrencyData.Value}) 
+	toggleData.Changed:Connect(function(newState)
+		self:UpdateToggleImage(newState)
 	end)
 end
 
+--stylua: ignore
 function AutoClickerController:SetupAutoClicker()
 	local playerCurrencies = player:WaitForChild("Currencies")
 
 	local playerWallet = playerCurrencies:WaitForChild(activeCurrencyData.Value)
-	local activeConfig = ClickerConfig[activeCurrencyData.Value]
+	local activeIcon = ClicksConfig.Icons[activeCurrencyData.Value]
+	local toggleIcon
+
+	if toggleData.Value == true then 
+		toggleIcon = ClicksConfig.Icons.Toggle.On
+	else
+		toggleIcon = ClicksConfig.Icons.Toggle.Off
+	end
 
 	if not playerWallet then return end
-	if not activeConfig then return end
+	if not activeIcon then return end
 
-	activeAcButton.Image = activeConfig.Icon
+	activeAcButton.Image = activeIcon
+	toggleImage.Image = toggleIcon
 end
 
 function AutoClickerController:UpdateAutoClicker(newCurrency)
-	local newCurrencyConfig = ClickerConfig[newCurrency]
+	local newCurrencyIcon = ClicksConfig.Icons[newCurrency]
 
-	if not newCurrencyConfig then return end
+	if not newCurrencyIcon then return end
 
-	activeAcButton.Image = newCurrencyConfig.Icon
+	activeAcButton.Image = newCurrencyIcon
+end
+
+function AutoClickerController:UpdateToggleImage(newState)
+	local toggleIcon = ClicksConfig.Icons.Toggle.Off
+
+	if newState == true then toggleIcon = ClicksConfig.Icons.Toggle.On end
+
+	toggleImage.Image = toggleIcon
 end
 
 return AutoClickerController

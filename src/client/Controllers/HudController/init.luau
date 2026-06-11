@@ -8,7 +8,7 @@ local Configs = ReplicatedStorage.Shared.Configs
 
 -- modules
 local DataConfig = require(Configs.DataConfig)
-local ClickerConfigs = require(Configs.ClickersConfig)
+local ClicksConfig = require(Configs.ClicksConfig)
 local FormatService = require(ReplicatedStorage.Shared.Modules.FormatService)
 
 local player = Players.LocalPlayer
@@ -20,7 +20,7 @@ local currenciesFrame = leftHud:WaitForChild("Currencies")
 local dataTemplate = DataConfig.Template
 local playerCurrencies = player:WaitForChild("Currencies")
 
-local cooldown = ClickerConfigs.Clicker.Cooldown
+local cooldown = ClicksConfig.Clicker.Cooldown
 local gainTweenInfo = TweenInfo.new(cooldown / 2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, true)
 
 local randomGenerator = Random.new()
