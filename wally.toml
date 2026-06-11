@@ -8,6 +8,7 @@ realm = "shared"
 Formatnumber = "kumarion/formatnumber@0.0.1"
 Bridgenet2 = "darkestdev/bridgenet2@1.0.2"
 Loader = "sleitnick/loader@2.0.0"
+Shake = "sleitnick/shake@1.1.0"
 
 [server-dependencies]
 ProfileStore = "ddashdev/profilestore@1.1.0"

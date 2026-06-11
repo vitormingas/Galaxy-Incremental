@@ -1,21 +1,32 @@
 -- services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 -- references
 local Configs = ReplicatedStorage.Shared.Configs
 
 -- modules
 local DataConfig = require(Configs.DataConfig)
+local ClickerConfigs = require(Configs.ClickersConfig)
 local FormatService = require(ReplicatedStorage.Shared.Modules.FormatService)
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local mainScreenGui = playerGui:WaitForChild("Main")
-local currenciesFrame = mainScreenGui:WaitForChild("Currencies")
+local leftHud = mainScreenGui:WaitForChild("LeftHUD")
+local currenciesFrame = leftHud:WaitForChild("Currencies")
 
 local dataTemplate = DataConfig.Template
 local playerCurrencies = player:WaitForChild("Currencies")
+
+local cooldown = ClickerConfigs.Clicker.Cooldown
+local gainTweenInfo = TweenInfo.new(cooldown / 2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, true)
+
+local randomGenerator = Random.new()
+
+local frameSizes = {}
+local animatingFrames = {}
 
 local HudController = {}
 
@@ -27,13 +38,16 @@ function HudController:init()
 		local currency = currencyFolder.Name
 		if not dataTemplate.Currencies[currency] then continue end
 
-		local playerWallet = playerCurrencies:WaitForChild(currency):WaitForChild("Amount")
+		local playerWallet = currencyFolder:WaitForChild("Amount")
 		if not playerWallet then continue end
-
-		playerWallet.Changed:Connect(function(newValue) self:UpdateCurrency(currency, newValue) end)
+		
+		playerWallet.Changed:Connect(function(newValue)
+			 self:UpdateCurrency(currency, newValue) 
+		end)
 	end
 end
 
+--stylua: ignore
 function HudController:SetupCurrencies()
 	for _, currencyFolder in playerCurrencies:GetChildren() do
 		local currency = currencyFolder.Name
@@ -41,6 +55,10 @@ function HudController:SetupCurrencies()
 
 		local currencyFrame = currenciesFrame:WaitForChild(currency)
 		if not currencyFrame then continue end
+
+		if not frameSizes[currency] then
+			frameSizes[currency] = currencyFrame.Size
+		end
 
 		local textLabel: TextLabel = currencyFrame:WaitForChild("TextLabel")
 		local playerWallet = playerCurrencies:WaitForChild(currency):WaitForChild("Amount")
@@ -50,12 +68,44 @@ function HudController:SetupCurrencies()
 	end
 end
 
+--stylua: ignore
 function HudController:UpdateCurrency(currency: string, amount: number)
-	local currencyFrame = currenciesFrame:WaitForChild(currency)
-	if not currencyFrame then return end
+	local currencyFrame = currenciesFrame:FindFirstChild(currency)
+	local textLabel: TextLabel = currencyFrame:FindFirstChild("TextLabel")
+	local textFlash: TextLabel = currencyFrame:FindFirstChild("TextFlash")
+	if not currencyFrame or not textLabel then return end
 
-	local textLabel: TextLabel = currencyFrame:WaitForChild("TextLabel")
+	self:GainAnimation(currency, currencyFrame, textLabel, textFlash)
 	textLabel.Text = FormatService:Format(amount)
+	textFlash.Text = FormatService:Format(amount)
+end
+
+--stylua: ignore
+function HudController:GainAnimation(currency, currencyFrame, textLabel, textFlash)
+	if not animatingFrames[currency] then
+		animatingFrames[currency] = true
+		textFlash.Visible = true
+
+		local baseSize = frameSizes[currency]
+		local gainProps = { Size = baseSize + UDim2.fromScale(0.02, 0.015) }
+		local gainTween = TweenService:Create(currencyFrame, gainTweenInfo, gainProps)
+
+		local randomRot = randomGenerator:NextNumber(-5, 5)
+		local jitterProps = { Rotation = randomRot }
+		local jitterTweenLabel = TweenService:Create(textLabel, TweenInfo.new(0.05), jitterProps)
+		local jitterTweenFlash = TweenService:Create(textFlash, TweenInfo.new(0.05), jitterProps)
+
+		jitterTweenLabel:Play()
+		jitterTweenFlash:Play()
+		gainTween:Play()
+
+		gainTween.Completed:Connect(function()
+			animatingFrames[currency] = false
+			textFlash.Visible = false
+			textLabel.Rotation = 0
+			textFlash.Rotation = 0
+		end)
+	end
 end
 
 return HudController

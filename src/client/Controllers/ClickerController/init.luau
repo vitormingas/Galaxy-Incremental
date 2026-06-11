@@ -8,7 +8,7 @@ local Configs = ReplicatedStorage.Shared.Configs
 
 -- modules
 local BridgeNet2 = require(Packages.Bridgenet2)
-local ClickerConfig = require(Configs.Clickers)
+local ClickerConfig = require(Configs.ClickersConfig)
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")

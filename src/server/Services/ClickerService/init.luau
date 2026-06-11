@@ -11,7 +11,7 @@ local Configs = ReplicatedStorage.Shared.Configs
 -- modules
 local CurrencyService = require(Services.CurrencyService)
 local BridgeNet2 = require(Packages.Bridgenet2)
-local ClickersConfig = require(Configs.Clickers)
+local ClickersConfig = require(Configs.ClickersConfig)
 
 local ClickerService = {}
 
@@ -36,7 +36,7 @@ function ClickerService:onButtonClick(player, currency)
 
 	local currentTime = os.clock()
 	local lastClickTime = cooldowns[player] or 0
-	local cooldown = ClickersConfig[currencyName].Cooldown
+	local cooldown = ClickersConfig.Clicker.Cooldown
 
 	if currentTime - lastClickTime < cooldown then return end
 
