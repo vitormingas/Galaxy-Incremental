@@ -19,6 +19,7 @@ local playerCurrencies = player:WaitForChild("Currencies")
 
 local HudController = {}
 
+--stylua: ignore
 function HudController:init()
 	self:SetupCurrencies()
 

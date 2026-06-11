@@ -22,12 +22,18 @@ local profilesInCache: { [Player]: typeof(playerStore:StartSessionAsync()) } = {
 
 local ProfileService = {}
 
+--stylua: ignore
 function ProfileService:init()
 	for _, player in Players:GetPlayers() do
 		task.spawn(function() self:LoadData(player) end)
 	end
-	Players.PlayerAdded:Connect(function(player: Player) self:LoadData(player) end)
-	Players.PlayerRemoving:Connect(function(player: Player) self:SaveData(player) end)
+	
+	Players.PlayerAdded:Connect(function(player: Player)
+		 self:LoadData(player) 
+	end)
+	Players.PlayerRemoving:Connect(function(player: Player)
+		 self:SaveData(player) 
+	end)
 end
 
 -- data things
