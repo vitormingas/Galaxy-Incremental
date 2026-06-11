@@ -16,7 +16,7 @@ DataConfig.Template = {
 	},
 
 	Settings = {
-		ActiveClicker = "StarDust",
+		ActiveMainCurrency = "StarDust",
 	},
 }
 
