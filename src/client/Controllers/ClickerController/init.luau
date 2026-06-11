@@ -31,8 +31,9 @@ function ClickerController:init()
 		 self:UpdateClicker(newCurrency) 
 	end)
 
+	-- mouse listeners
 	activeClickerButton.MouseButton1Click:Connect(function()
-	 clickEvent:Fire({ activeClickerData.Value }) 
+	 	clickEvent:Fire({ activeClickerData.Value }) 
 	end)
 end
 
